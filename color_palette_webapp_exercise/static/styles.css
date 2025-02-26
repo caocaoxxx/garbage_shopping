@@ -1,0 +1,83 @@
+/* 定义一个名为".loader"的类 
+   总的来说，这段CSS定义了一个旋转的加载指示器，当页面正在加载或正在进行某项需要时间的操作时，
+   可以使用这个指示器向用户显示加载状态。
+*/
+.loader {
+    /* 定义边框的样式，总体为5px的宽度，颜色为#f3f3f3，但顶部的颜色为#3498db */
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    /* 定义边框的圆角，50%意味着边框将完全圆化，形成一个圆形 */
+    border-radius: 50%;
+    /* 定义加载指示器的宽度和高度，都是50px */
+    width: 50px;
+    height: 50px;
+    /* 定义一个名为"spin"的动画，动画的持续时间为2秒，动画的速度曲线为匀速，动画将无限次播放 */
+    animation: spin 2s linear infinite;
+}
+
+/* 定义一个名为"spin"的关键帧动画 */
+@keyframes spin {
+    0% { transform: rotate(0deg); } /* 在动画开始时（0%的时间点），元素不进行任何旋转 */
+    100% { transform: rotate(360deg); } /* 在动画结束时（100%的时间点），元素旋转360度 */
+}
+
+
+/* ------------------------------------ */
+.color-block {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.4s ease;
+}
+
+.color-block:hover {
+    transform: scale(0.98);
+}
+
+.color-block p {
+    z-index: 1;
+}
+
+
+
+/* ------------------------------------ */
+.lines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.lines > div {
+  position: absolute;
+  inset: 0;
+}
+
+.lines > div svg {
+  display: block;
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  fill: none;
+  stroke-width: 3;
+  stroke: darkblue;
+  width: 100%;
+  height: 100%;
+  stroke-dasharray: 16;
+  stroke-dashoffset: 16;
+  opacity: 0;
+  transform: rotate(0deg) translate3d(0, 0, 0);
+}
+
+.lines.start svg {
+  /*  记住在javascript的startAnimation函数中也要设置对应的时间  */
+  animation: stroke 0.6s linear;
+}
+
+@keyframes stroke {
+  30%, 55% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}

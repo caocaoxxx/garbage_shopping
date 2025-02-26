@@ -1,0 +1,42 @@
+<html>
+
+<head>
+    <!-- 引入外部样式表 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+
+<body>
+    <h1>调色板生成器</h1>
+    <button id="generateButton" type="button">Generate Random Palette</button>
+    <div id="paletteDisplay" style="display: flex;"></div> <!-- 用于显示调色板的容器 -->
+    <h2>或者上传图片并从中提取调色板:</h2>
+    <input type="file" id="imageFile">
+    <button id="uploadButton" type="button">上传图像</button>
+    <!-- <img id="imagePreview" width="200px" style="display: none;"><!-- 图片预览 --> -->
+    <!-- 添加一个包含图像预览和框线的容器 -->
+    <div id="imageContainer" style="position: relative; display: inline-flex;">
+        <img id="imagePreview" width="200px" style="display: none;">
+        <div id="cropBox" style="border: 2px dashed red; position: absolute; display: none; cursor: move;">
+            <div id="resizeHandle" style="width: 10px; height: 10px; background-color: red; position: absolute; bottom: 0; right: 0; cursor: nw-resize;"></div>
+        </div>
+    </div>
+    <!-- 添加一个长方形框，设置其样式，并使其可拖动 -->
+    <!-- <div id="cropBox" style="border: 2px dashed red; position: absolute; display: none; cursor: move;"></div> -->
+    <!-- 添加一个表单字段，用于存储长方形框的坐标 -->
+    <input type="hidden" id="cropBoxCoords" name="cropBoxCoords">
+    <!-- 引入名为cropper.js的外部脚本 -->
+    <script src="{{ url_for('static', filename='cropper.js') }}"></script>
+    <!-- ----------------------------------- -->
+    <!-- 进度条容器 -->
+    <div id="progressBar" style="display: none; width: 100%; border: 1px solid black; z-index: 100;">
+        <div id="progress" style="height: 20px; background-color: green; width: 0;"></div>
+    </div>
+    <!-- 用于显示图片调色板的容器 -->
+    <div id="imagePaletteDisplay" style="display: flex;"></div>
+    <!-- 引入jQuery库 -->
+    <script src="{{ url_for('static', filename='jquery-3.6.4.min.js') }}"></script>
+    <!-- 引入外部脚本文件 -->
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</body>
+
+</html>
