@@ -38,28 +38,31 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("生活垃圾智能分类系统")
-        self.setMinimumSize(1200, 900)  # 调整窗口尺寸
         
-        # 新增顶部标题标签，并增大字号
+        # 设置窗口大小适配7寸屏幕(1024x600)
+        self.setFixedSize(1024, 600)  # 使用固定大小，充分利用屏幕空间
+        
+        # 顶部标题标签，减少高度
         headerLabel = QLabel("生活垃圾智能分类系统")
         headerLabel.setAlignment(Qt.AlignCenter)
-        headerLabel.setFont(QFont("Arial", 24, QFont.Bold))  # 增大字号
-        headerLabel.setStyleSheet("margin: 10px;")  # 增加边距
+        headerLabel.setFont(QFont("Arial", 16, QFont.Bold))  # 适当减小字号
+        headerLabel.setStyleSheet("margin: 2px; padding: 2px;")  # 减小边距
+        headerLabel.setFixedHeight(30)  # 固定高度以节省空间
         
-        # 初始化各窗口部件
+        # 初始化视频区域，占用更大空间
         self.videoLabel = QLabel()
-        self.videoLabel.setMinimumSize(450, 350)  # 增大视频显示区域
+        self.videoLabel.setMinimumSize(400, 300)  # 增大视频显示区域
         self.videoLabel.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.videoLabel.setAlignment(Qt.AlignCenter)
         self.videoLabel.setStyleSheet("border: 1px solid #cccccc; background-color: #f0f0f0;")
         
         self.movieLabel = QLabel()
-        self.movieLabel.setMinimumSize(450, 350)  # 增大视频显示区域
+        self.movieLabel.setMinimumSize(400, 300)  # 增大视频显示区域
         self.movieLabel.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.movieLabel.setAlignment(Qt.AlignCenter)
         self.movieLabel.setStyleSheet("border: 1px solid #cccccc; background-color: #f0f0f0;")
         
-        # 状态表格 - 修改回4行
+        # 状态表格 - 保持4行但减小高度
         self.statusTable = QTableWidget(4, 4)
         self.statusTable.setHorizontalHeaderLabels(["序号", "垃圾类型", "数量", "状态"])
         self.statusTable.setStyleSheet("QHeaderView::section { background-color: #e1e1e1; }")
@@ -78,26 +81,20 @@ class MainWindow(QMainWindow):
         # 禁用水平滚动条
         self.statusTable.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         
-        # 根据4行内容调整固定高度
-        self.statusTable.setMinimumHeight(180)  # 增加表格高度以容纳4行
-        self.statusTable.setMaximumHeight(180)
+        # 设置表格固定高度
+        self.statusTable.setFixedHeight(110)  # 减小高度但确保四行显示完全
         
-        # 日志区域
+        # 日志区域 - 减小高度
         self.logArea = QTextEdit()
-        self.logArea.setMinimumHeight(150)
+        self.logArea.setFixedHeight(80)  # 减小到最小实用高度
         self.logArea.setStyleSheet("border: 1px solid #cccccc; background-color: #f8f8f8;")
         self.logArea.setReadOnly(True)
         
-        # 不再需要单独的视频标题标签，删除这些代码
-        
-        # 只保留状态表格和日志区域的标题标签
-        statusTitleLabel = QLabel("垃圾分类状态")
-        statusTitleLabel.setAlignment(Qt.AlignCenter)
-        statusTitleLabel.setFont(QFont("Arial", 12, QFont.Bold))
-        
-        logTitleLabel = QLabel("系统日志显示")
+        # 移除 "垃圾分类状态" 标题，保留日志区域标题
+        logTitleLabel = QLabel("系统日志")  # 简化标题文本
         logTitleLabel.setAlignment(Qt.AlignCenter)
-        logTitleLabel.setFont(QFont("Arial", 12, QFont.Bold))
+        logTitleLabel.setFont(QFont("Arial", 10, QFont.Bold))
+        logTitleLabel.setFixedHeight(20)  # 减小高度
         
         # 初始化垃圾计数和状态 - 增加状态跟踪
         self.counts = {cls: 0 for cls in CLASS_NAMES_CN.values()}
@@ -116,36 +113,42 @@ class MainWindow(QMainWindow):
         self.new_frame_time = 0
         self.fps = 0
 
-        # 视频区布局 - 去掉标题，直接添加视频标签
+        # 视频区布局 - 直接添加视频标签
         videoLayout = QVBoxLayout()
         videoLayout.addWidget(self.videoLabel)
+        videoLayout.setContentsMargins(5, 5, 5, 5)  # 减小边距
         
         movieLayout = QVBoxLayout()
         movieLayout.addWidget(self.movieLabel)
+        movieLayout.setContentsMargins(5, 5, 5, 5)  # 减小边距
         
         hlayoutVideos = QHBoxLayout()
         hlayoutVideos.addLayout(movieLayout)
         hlayoutVideos.addLayout(videoLayout)
+        hlayoutVideos.setContentsMargins(0, 0, 0, 0)  # 移除边距
         
-        # 状态表格布局
-        statusLayout = QVBoxLayout()
-        statusLayout.addWidget(statusTitleLabel)
-        statusLayout.addWidget(self.statusTable)
+        # 创建一个单独的表格容器，不包含标题
+        tableContainer = QVBoxLayout()
+        tableContainer.addWidget(self.statusTable)
+        tableContainer.setContentsMargins(10, 0, 10, 5)  # 顶部无边距
         
-        # 系统日志布局
+        # 日志区域布局，包含标题
         logLayout = QVBoxLayout()
         logLayout.addWidget(logTitleLabel)
         logLayout.addWidget(self.logArea)
+        logLayout.setContentsMargins(10, 0, 10, 10)  # 顶部无边距
         
-        # 整体垂直布局：标题 - 视频区 - 状态表格 - 日志区
-        vlayout = QVBoxLayout()
-        vlayout.addWidget(headerLabel)  # 顶部标题
-        vlayout.addLayout(hlayoutVideos, 3)  # 视频区占较大比重
-        vlayout.addLayout(statusLayout, 1)
-        vlayout.addLayout(logLayout, 1)
+        # 整体垂直布局：标题 - 视频区 - 表格 - 日志
+        mainLayout = QVBoxLayout()
+        mainLayout.addWidget(headerLabel)
+        mainLayout.addLayout(hlayoutVideos)
+        mainLayout.addLayout(tableContainer)
+        mainLayout.addLayout(logLayout)
+        mainLayout.setSpacing(5)  # 减少组件间距
+        mainLayout.setContentsMargins(5, 5, 5, 5)  # 减小边距
         
         centralWidget = QWidget()
-        centralWidget.setLayout(vlayout)
+        centralWidget.setLayout(mainLayout)
         self.setCentralWidget(centralWidget)
 
         # 设置表格所在布局的最小宽度
@@ -153,7 +156,7 @@ class MainWindow(QMainWindow):
 
         # 视频文件和摄像头初始化
         self.movieCap = cv2.VideoCapture("movie.mp4")
-        self.detCap = cv2.VideoCapture(1)  # 使用外接摄像头(索引为1)
+        self.detCap = cv2.VideoCapture(0)  # 使用外接摄像头(索引为1)
 
         # 加载YOLOv8模型(best.pt)
         self.model = YOLO("best.pt")
@@ -182,11 +185,22 @@ class MainWindow(QMainWindow):
         
         # 加载中文字体用于显示检测框标签
         try:
-            self.font = ImageFont.truetype('SimHei.ttf', 20)
+            self.font = ImageFont.truetype('SimHei.ttf', 16)  # 从20调整为16
             self.log("成功加载中文字体")
         except Exception as e:
             self.log(f"加载中文字体失败: {str(e)}")
             self.font = None
+        
+        # 窗口居中显示 - 在显示窗口前设置
+        self.centerWindow()
+        
+    def centerWindow(self):
+        """使窗口在7寸屏幕上居中显示"""
+        # 获取屏幕几何信息 - 7寸屏幕分辨率为1024x600
+        screen_geometry = QApplication.desktop().screenGeometry()
+        x = (screen_geometry.width() - 1024) // 2  # 使用固定宽度1024
+        y = (screen_geometry.height() - 600) // 2  # 使用固定高度600
+        self.move(x, y)
         
     def updateStatusTable(self):
         # 更新状态表格，包含新的状态显示逻辑
@@ -499,5 +513,9 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     win = MainWindow()
+    
+    # 确保窗口完全加载后再居中显示
     win.show()
+    win.centerWindow()
+    
     sys.exit(app.exec_())
