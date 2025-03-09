@@ -151,8 +151,6 @@ class MainWindow(QMainWindow):
         centralWidget.setLayout(mainLayout)
         self.setCentralWidget(centralWidget)
 
-        # 设置表格所在布局的最小宽度
-        statusLayout.setContentsMargins(10, 5, 10, 5)  # 增加左右间距
 
         # 视频文件和摄像头初始化
         self.movieCap = cv2.VideoCapture("movie.mp4")
