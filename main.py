@@ -356,8 +356,14 @@ class MainWindow(QMainWindow):
             self.servo_lock.acquire()
             if self.ser:
                 try:
-                    # 使用更新后的垃圾类型标签
-                    cmd = f"CLASS:{label_key.upper()}"
+                    # 将标签转换为整型索引
+                    trash_index = TrashType.YOUHAI if label_key == 'youhai' else \
+                                 TrashType.KEHUISHOU if label_key == 'kehuishou' else \
+                                 TrashType.CHUYU if label_key == 'chuyu' else \
+                                 TrashType.QITA
+                    
+                    # 发送整型索引而不是字符串
+                    cmd = f"CLASS:{trash_index}"
                     self.ser.write(cmd.encode())
                     print(f"发送指令: {cmd}")  # 输出到终端
                 except Exception as e:
@@ -366,8 +372,8 @@ class MainWindow(QMainWindow):
                     print(error_msg)  # 输出到终端
             
             # 等待Arduino完成动作，可能会收到DONE信号或者设定超时时间
-            # 这里我们继续使用6秒的等待，确保舵机动作完成并复位
-            time.sleep(6)
+            # 舵机执行时间更长了，增加等待时间
+            time.sleep(10)  # 调整为等待10秒，覆盖所有舵机动作的时间
             
             # 更新计数，先更新内部记录后在界面上显示（舵机必须完全复位后才能更新数量显示）
             self.counts[label_cn] += 1
